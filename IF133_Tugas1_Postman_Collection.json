@@ -1,0 +1,63 @@
+{
+  "info": {
+    "name": "IF133 Tugas 1 - Products API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. GET semua data",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:5154/api/products"
+      }
+    },
+    {
+      "name": "2. POST data valid",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"name\": \"Mouse Gaming\", \"description\": \"Wireless 2.4GHz\", \"price\": 250000, \"stock\": 10}" },
+        "url": "http://localhost:5154/api/products"
+      }
+    },
+    {
+      "name": "3. GET by ID valid",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:5154/api/products/1"
+      }
+    },
+    {
+      "name": "4. PUT update data",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"name\": \"Mouse Gaming Pro\", \"description\": \"Wireless 8K Hz\", \"price\": 350000, \"stock\": 7}" },
+        "url": "http://localhost:5154/api/products/1"
+      }
+    },
+    {
+      "name": "5. DELETE by ID",
+      "request": {
+        "method": "DELETE",
+        "url": "http://localhost:5154/api/products/1"
+      }
+    },
+    {
+      "name": "6. GET ID tidak ada (404)",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:5154/api/products/999"
+      }
+    },
+    {
+      "name": "7. POST data tidak valid (400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"name\": \"\", \"description\": \"\", \"price\": -5000, \"stock\": -1}" },
+        "url": "http://localhost:5154/api/products"
+      }
+    }
+  ]
+}
