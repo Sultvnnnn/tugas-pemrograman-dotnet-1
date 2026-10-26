@@ -41,6 +41,32 @@ namespace IF133.Tugas1.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Keyboard 75% hot-swap",
+                            Name = "Keyboard Mechanical",
+                            Price = 350000m,
+                            Stock = 5
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Mouse wireless 2.4GHz",
+                            Name = "Mouse Gaming",
+                            Price = 250000m,
+                            Stock = 10
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Monitor IPS 75Hz",
+                            Name = "Monitor 24 Inch",
+                            Price = 1500000m,
+                            Stock = 3
+                        });
                 });
 #pragma warning restore 612, 618
         }

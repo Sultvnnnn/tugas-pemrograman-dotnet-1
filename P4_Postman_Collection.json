@@ -1,0 +1,216 @@
+{
+  "info": {
+    "name": "IF133 P4 - Tugas 1 Final (EF Core + Seed)",
+    "description": "Collection pengujian P04. Jalankan berurutan 1-8. Base URL: http://localhost:5154. Pastikan database sudah dibuat ulang dari migration (dotnet ef database update) sebelum menjalankan collection ini.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5154"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. GET semua data (harus 3 data seed)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const rows1 = pm.response.json();",
+              "pm.test('array berisi minimal 3 data seed', () => pm.expect(rows1.length).to.be.at.least(3));",
+              "pm.test('data seed ada', () => {",
+              "  const names = rows1.map(p => p.name);",
+              "  pm.expect(names).to.include('Keyboard Mechanical');",
+              "  pm.expect(names).to.include('Mouse Gaming');",
+              "  pm.expect(names).to.include('Monitor 24 Inch');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/products"
+      }
+    },
+    {
+      "name": "2. GET by ID valid (seed id 1)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const row = pm.response.json();",
+              "pm.test('id = 1', () => pm.expect(row.id).to.eql(1));",
+              "pm.test('name = Keyboard Mechanical', () => pm.expect(row.name).to.eql('Keyboard Mechanical'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/products/1"
+      }
+    },
+    {
+      "name": "3. POST data valid (201)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', () => pm.response.to.have.status(201));",
+              "const row = pm.response.json();",
+              "pm.test('id terbentuk', () => pm.expect(row.id).to.be.a('number'));",
+              "pm.test('name sesuai', () => pm.expect(row.name).to.eql('Webcam Full HD'));",
+              "pm.collectionVariables.set('newProductId', row.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"Webcam Full HD\", \"description\": \"Webcam 1080p dengan mikrofon\", \"price\": 450000, \"stock\": 8}"
+        },
+        "url": "{{baseUrl}}/api/products"
+      }
+    },
+    {
+      "name": "4. GET by ID hasil POST (bukti persistence)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const row = pm.response.json();",
+              "pm.test('data tersimpan di database', () => pm.expect(row.name).to.eql('Webcam Full HD'));",
+              "pm.test('id sama dengan hasil POST', () => pm.expect(row.id).to.eql(pm.collectionVariables.get('newProductId')));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/products/{{newProductId}}"
+      }
+    },
+    {
+      "name": "5. PUT update data (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const row = pm.response.json();",
+              "pm.test('name terupdate', () => pm.expect(row.name).to.eql('Webcam Full HD Pro'));",
+              "pm.test('stock terupdate', () => pm.expect(row.stock).to.eql(12));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"Webcam Full HD Pro\", \"description\": \"Webcam 1080p + ring light\", \"price\": 550000, \"stock\": 12}"
+        },
+        "url": "{{baseUrl}}/api/products/{{newProductId}}"
+      }
+    },
+    {
+      "name": "6. DELETE data (204)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 204', () => pm.response.to.have.status(204));",
+              "pm.test('body kosong', () => pm.expect(pm.response.text()).to.eql(''));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/products/{{newProductId}}"
+      }
+    },
+    {
+      "name": "7. GET ID tidak ada (404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 404', () => pm.response.to.have.status(404));",
+              "pm.test('ProblemDetails status 404', () => pm.expect(pm.response.json().status).to.eql(404));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/products/999"
+      }
+    },
+    {
+      "name": "8. POST data tidak valid (400)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 400', () => pm.response.to.have.status(400));",
+              "const errs = pm.response.json().errors;",
+              "pm.test('error Name', () => pm.expect(errs).to.have.property('Name'));",
+              "pm.test('error Price', () => pm.expect(errs).to.have.property('Price'));",
+              "pm.test('error Stock', () => pm.expect(errs).to.have.property('Stock'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\": \"\", \"description\": \"Data tidak valid\", \"price\": -5000, \"stock\": -1}"
+        },
+        "url": "{{baseUrl}}/api/products"
+      }
+    }
+  ]
+}
